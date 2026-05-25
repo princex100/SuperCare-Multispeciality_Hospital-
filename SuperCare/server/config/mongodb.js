@@ -25,7 +25,7 @@ const connectDB = async () => {
   });
 
   try {
-    await mongoose.connect(`${process.env.MONGODB_URI}/test`, {
+    await mongoose.connect(`${process.env.MONGODB_URI}/SuperCare-Hospital`, {
       serverSelectionTimeoutMS: 5000, // Fail fast if can't reach server
       socketTimeoutMS: 45000,         // Drop idle sockets
       family: 4,                      // Use IPv4 (faster DNS)

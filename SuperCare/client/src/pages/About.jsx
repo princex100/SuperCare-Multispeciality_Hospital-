@@ -7,7 +7,7 @@ const About = () => {
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-400 to-green-400 text-white py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl font-bold mb-3">About Nauracare</h1>
+          <h1 className="text-4xl font-bold mb-3">About SuperCare</h1>
           <p className="text-xl text-blue-50">Your trusted partner in healthcare management</p>
         </div>
       </div>
@@ -25,15 +25,15 @@ const About = () => {
           </div>
           <div className="lg:w-1/2">
             <div className="bg-white p-8 rounded-xl shadow-md border border-blue-100">
-              <h2 className="text-2xl font-bold text-blue-800 mb-6">Welcome to Nauracare</h2>
+              <h2 className="text-2xl font-bold text-blue-800 mb-6">Welcome to SuperCare</h2>
               <div className="space-y-6 text-gray-600">
-                <p>Welcome to Nauracare, your trusted partner in managing your healthcare needs conveniently and efficiently. At Prescripto, we understand the challenges individuals face when it comes to scheduling doctor appointments and managing their health records.</p>
+                <p>Welcome to SuperCare, your trusted partner in managing your healthcare needs conveniently and efficiently. At SuperCare, we understand the challenges individuals face when it comes to scheduling doctor appointments and managing their health records.</p>
                 
-                <p>Nauracare is committed to excellence in healthcare technology. We continuously strive to enhance our platform, integrating the latest advancements to improve user experience and deliver superior service. Whether you're booking your first appointment or managing ongoing care, Prescripto is here to support you every step of the way.</p>
+                <p>SuperCare is committed to excellence in healthcare technology. We continuously strive to enhance our platform, integrating the latest advancements to improve user experience and deliver superior service. Whether you're booking your first appointment or managing ongoing care, SuperCare is here to support you every step of the way.</p>
                 
                 <div>
                   <h3 className="text-xl font-semibold text-green-600 mb-3">Our Vision</h3>
-                  <p>Our vision at Nauracare is to create a seamless healthcare experience for every user. We aim to bridge the gap between patients and healthcare providers, making it easier for you to access the care you need, when you need it.</p>
+                  <p>Our vision at SuperCare is to create a seamless healthcare experience for every user. We aim to bridge the gap between patients and healthcare providers, making it easier for you to access the care you need, when you need it.</p>
                 </div>
               </div>
             </div>
@@ -43,7 +43,7 @@ const About = () => {
         {/* Why Choose Us */}
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-blue-800 mb-2">Why Choose Us</h2>
-          <p className="text-lg text-gray-500">Discover what makes Nauracare different</p>
+          <p className="text-lg text-gray-500">Discover what makes SuperCare different</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">

@@ -19,7 +19,7 @@ const navLinks = [
   { path: "/contact", label: "Contact", icon: FaEnvelope }
 ];
 
-const staffLoginUrl = "https://staff.nauracare.example.com";
+const staffLoginUrl = "https://staff.supercare.com";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -45,13 +45,13 @@ const Navbar = () => {
         href={staffLoginUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-2 bg-teal-50 hover:bg-teal-100 text-teal-700 px-4 py-2 rounded-full border border-teal-100 font-medium"
+        className="flex items-center gap-2 bg-teal-50 hover:bg-teal-100 text-teal-700 px-4 py-2 rounded-full border border-teal-100 font-medium transition-colors"
       >
         <FaUserMd /><span>Staff Login</span><FaExternalLinkAlt className="text-xs" />
       </a>
       <button
         onClick={() => navigate("/login")}
-        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full font-medium shadow-md"
+        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full font-medium shadow-md transition-colors"
       >
         <HiOutlineLogin /><span>Login</span>
       </button>
@@ -103,11 +103,11 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       {/* Top Info */}
-      <div className="hidden md:block bg-gradient-to-r from-blue-800 to-green-400 text-white text-sm py-2 px-4">
+      <div className="hidden md:block bg-gradient-to-r from-blue-800 to-teal-500 text-white text-sm py-2 px-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex space-x-6">
-            <div className="flex items-center space-x-1"><FaPhoneAlt size={12} /><span>Emergency: (123) 456-7890</span></div>
-            <div className="flex items-center space-x-1"><FaMapMarkerAlt size={12} /><span>123 Healing St, Medical City</span></div>
+            <div className="flex items-center space-x-1"><FaPhoneAlt size={12} /><span>Emergency: +1 (555) 123-4567</span></div>
+            <div className="flex items-center space-x-1"><FaMapMarkerAlt size={12} /><span>123 Health Ave, SuperCare Medical Center</span></div>
           </div>
           <div className="flex items-center space-x-1"><GiMedicines size={14} /><span>24/7 Pharmacy Services</span></div>
         </div>
@@ -117,8 +117,10 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center cursor-pointer" onClick={() => navigate("/")}>
-          <img src={assets.logo} alt="NauraCare Logo" className="h-10 mr-2" />
-          <span className="text-2xl font-bold text-blue-800">NauraCare</span>
+          <img src={assets.logo} alt="SuperCare Logo" className="h-14 w-auto" />
+          <span className="ml-3 text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-700 to-teal-500 bg-clip-text text-transparent">
+            SuperCare
+          </span>
         </div>
 
         {/* Desktop Navigation */}
@@ -164,8 +166,10 @@ const Navbar = () => {
       <div className={`md:hidden fixed top-0 left-0 w-72 h-full z-50 bg-white transform transition-transform duration-300 shadow-2xl ${showMenu ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
           <div className="flex items-center cursor-pointer" onClick={() => { navigate("/"); setShowMenu(false); }}>
-            <img src={assets.logo} alt="NauraCare Logo" className="h-8 mr-2" />
-            <span className="text-xl font-bold text-blue-800">NauraCare</span>
+            <img src={assets.logo} alt="SuperCare Logo" className="h-12 w-auto" />
+            <span className="ml-2 text-2xl font-extrabold tracking-tight bg-gradient-to-r from-blue-700 to-teal-500 bg-clip-text text-transparent">
+              SuperCare
+            </span>
           </div>
           <button className="text-gray-500" onClick={() => setShowMenu(false)}><FaTimes size={24} /></button>
         </div>

@@ -13,7 +13,7 @@ const Footer = () => {
                         <div className="flex items-center mb-6">
                             <img
                                 src={assets.logo}
-                                alt="Prescripto Logo"
+                                alt="SuperCare Logo"
                                 className="w-44 h-auto transition-transform hover:scale-105 duration-300"
                             />
                         </div>
@@ -92,7 +92,7 @@ const Footer = () => {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-gray-700 font-medium">hello@neuracare.com</p>
+                                    <p className="text-gray-700 font-medium">hello@supercare.com</p>
                                     <p className="text-sm text-gray-500 mt-1">We reply within 24 hours</p>
                                 </div>
                             </li>
@@ -141,7 +141,7 @@ const Footer = () => {
                 <div className="border-t border-gray-200 pt-8">
                     <div className="flex flex-col md:flex-row justify-between items-center">
                         <p className="text-gray-500 text-sm mb-4 md:mb-0">
-                            &copy; {new Date().getFullYear()} Neuracare. All rights reserved.
+                            &copy; {new Date().getFullYear()} SuperCare. All rights reserved.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <a href="#" className="text-gray-500 hover:text-blue-600 text-sm transition-colors">Terms of Service</a>
@@ -149,17 +149,7 @@ const Footer = () => {
                             <a href="#" className="text-gray-500 hover:text-blue-600 text-sm transition-colors">Cookie Policy</a>
                             <a href="#" className="text-gray-500 hover:text-blue-600 text-sm transition-colors">Sitemap</a>
                         </div>
-                        <p className="text-gray-500 text-sm mt-4 md:mt-0">
-                            Crafted with <span className="text-red-500">♥</span> by{' '}
-                            <a
-                                href="https://www.linkedin.com/in/codewithkinu"
-                                className="text-blue-500 hover:underline"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Sahil
-                            </a>
-                        </p>
+                        
                     </div>
                 </div>
             </div>
