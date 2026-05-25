@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
-  FaUser, FaSignOutAlt, FaUserMd, FaExternalLinkAlt,
+  FaUser, FaSignOutAlt,
   FaChevronDown, FaBars, FaTimes, FaPhoneAlt, FaMapMarkerAlt,
   FaUserNurse, FaInfoCircle, FaHandsHelping, FaEnvelope,
   FaCalendarAlt, FaHome
@@ -18,8 +18,6 @@ const navLinks = [
   { path: "/services", label: "Services", icon: FaHandsHelping },
   { path: "/contact", label: "Contact", icon: FaEnvelope }
 ];
-
-const staffLoginUrl = "https://staff.supercare.com";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -41,14 +39,6 @@ const Navbar = () => {
 
   const AuthButtons = () => (
     <div className="hidden md:flex items-center space-x-3">
-      <a
-        href={staffLoginUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center gap-2 bg-teal-50 hover:bg-teal-100 text-teal-700 px-4 py-2 rounded-full border border-teal-100 font-medium transition-colors"
-      >
-        <FaUserMd /><span>Staff Login</span><FaExternalLinkAlt className="text-xs" />
-      </a>
       <button
         onClick={() => navigate("/login")}
         className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full font-medium shadow-md transition-colors"
@@ -202,19 +192,11 @@ const Navbar = () => {
               </>
             ) : (
               <div className="space-y-3">
-                <a
-                  href={staffLoginUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 bg-teal-50 hover:bg-teal-100 text-teal-700 px-6 py-3 rounded-full border border-teal-100 font-medium"
-                >
-                  <FaUserMd /><span>Staff Login</span><FaExternalLinkAlt className="text-xs" />
-                </a>
                 <button
                   onClick={() => { navigate("/login"); setShowMenu(false); }}
                   className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-medium shadow-md"
                 >
-                  <HiOutlineLogin /><span>Patient Login</span>
+                  <HiOutlineLogin /><span>Login</span>
                 </button>
               </div>
             )}

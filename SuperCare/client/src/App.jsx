@@ -11,7 +11,6 @@ import MyProfile from './pages/MyProfile'
 import Doctors from './pages/Doctors'
 import Appointment from './pages/Appointment'
 import Services from './pages/Services'
-import Verify from './pages/Verify'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -44,7 +43,6 @@ const App = () => {
             <Route path='/doctors' element={<Doctors />} />
             <Route path='/doctors/:speciality' element={<Doctors />} />
             <Route path='/services' element={<Services />} />
-            <Route path='/verify' element={<Verify />} />
           </Routes>
         </main>
         <Footer />

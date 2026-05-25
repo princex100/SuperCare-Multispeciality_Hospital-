@@ -23,6 +23,30 @@ const MyAppointments = () => {
         return `${dateArray[0]} ${months[Number(dateArray[1]) - 1]} ${dateArray[2]}`;
     };
 
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+            if (window.Razorpay) {
+                resolve(true);
+                return;
+            }
+
+            const existingScript = document.getElementById('razorpay-checkout-js');
+            if (existingScript) {
+                existingScript.addEventListener('load', () => resolve(true), { once: true });
+                existingScript.addEventListener('error', () => resolve(false), { once: true });
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.id = 'razorpay-checkout-js';
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.async = true;
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
     const getUserAppointments = async () => {
         try {
             setIsLoading(true);
@@ -57,12 +81,23 @@ const MyAppointments = () => {
     };
 
     const initPay = (order) => {
+        if (!window.Razorpay) {
+            toast.error('Razorpay checkout could not be loaded. Please disable script blockers and try again.');
+            return;
+        }
+
+        const razorpayKeyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
+        if (!razorpayKeyId) {
+            toast.error('Razorpay key is missing. Add VITE_RAZORPAY_KEY_ID in client/.env and restart Vite.');
+            return;
+        }
+
         const options = {
-            key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+            key: razorpayKeyId,
             amount: order.amount,
             currency: order.currency,
-            name: 'Appointment Payment',
-            description: "Appointment Payment",
+            name: 'SuperCare',
+            description: 'Appointment Payment',
             order_id: order.id,
             receipt: order.receipt,
             handler: async (response) => {
@@ -73,8 +108,11 @@ const MyAppointments = () => {
                         { headers: { token } }
                     );
                     if (data.success) {
-                        navigate('/my-appointments');
+                        toast.success(data.message);
+                        setPayment('');
                         getUserAppointments();
+                    } else {
+                        toast.error(data.message);
                     }
                 } catch (error) {
                     console.error(error);
@@ -91,37 +129,28 @@ const MyAppointments = () => {
 
     const appointmentRazorpay = async (appointmentId) => {
         try {
+            const isLoaded = await loadRazorpayScript();
+
+            if (!isLoaded) {
+                toast.error(
+                    'Unable to load Razorpay checkout. Please check browser extensions or network.'
+                );
+                return;
+            }
+
             const { data } = await axios.post(
                 `${backendUrl}/api/user/payment-razorpay`,
                 { appointmentId },
                 { headers: { token } }
             );
+
             if (data.success) {
                 initPay(data.order);
             } else {
-                toast.error(data.message);
+                toast.error(data.message || 'Unknown backend error');
             }
         } catch (error) {
-            console.error(error);
-            toast.error(error.message);
-        }
-    };
-
-    const appointmentStripe = async (appointmentId) => {
-        try {
-            const { data } = await axios.post(
-                `${backendUrl}/api/user/payment-stripe`,
-                { appointmentId },
-                { headers: { token } }
-            );
-            if (data.success) {
-                const { session_url } = data;
-                window.location.replace(session_url);
-            } else {
-                toast.error(data.message);
-            }
-        } catch (error) {
-            console.error(error);
+            console.error('Razorpay Error:', error);
             toast.error(error.message);
         }
     };
@@ -331,19 +360,6 @@ const MyAppointments = () => {
 
                                                     {!item.cancelled && !item.payment && !item.isCompleted && payment === item._id && (
                                                         <div className="flex flex-wrap gap-3">
-                                                            <motion.button
-                                                                whileHover={{ scale: 1.03 }}
-                                                                whileTap={{ scale: 0.97 }}
-                                                                onClick={() => appointmentStripe(item._id)}
-                                                                className="px-5 py-2.5 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors flex items-center"
-                                                            >
-                                                                <img 
-                                                                    src={assets.stripe_logo} 
-                                                                    alt="Stripe" 
-                                                                    className="h-5"
-                                                                />
-                                                                <span className="ml-2 text-gray-700">Pay with Stripe</span>
-                                                            </motion.button>
                                                             <motion.button
                                                                 whileHover={{ scale: 1.03 }}
                                                                 whileTap={{ scale: 0.97 }}
