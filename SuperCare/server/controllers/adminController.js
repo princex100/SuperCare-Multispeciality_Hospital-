@@ -46,7 +46,23 @@ const appointmentCancel = async (req, res) => {
     try {
 
         const { appointmentId } = req.body
+        const appointmentData = await appointmentModel.findById(appointmentId)
+
+        if (!appointmentData) {
+            return res.json({ success: false, message: 'Appointment not found' })
+        }
+
         await appointmentModel.findByIdAndUpdate(appointmentId, { cancelled: true })
+
+        // releasing doctor slot
+        const { docId, slotDate, slotTime } = appointmentData
+        const doctorData = await doctorModel.findById(docId)
+
+        if (doctorData && doctorData.slots_booked[slotDate]) {
+            let slots_booked = doctorData.slots_booked
+            slots_booked[slotDate] = slots_booked[slotDate].filter(e => e !== slotTime)
+            await doctorModel.findByIdAndUpdate(docId, { slots_booked })
+        }
 
         res.json({ success: true, message: 'Appointment Cancelled' })
 
@@ -84,8 +100,13 @@ const addDoctor = async (req, res) => {
         const salt = await bcrypt.genSalt(10); // the more no. round the more time it will take
         const hashedPassword = await bcrypt.hash(password, salt)
 
-        // upload image to cloudinary
-        const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" })
+        // upload image to cloudinary using buffer (memoryStorage compatible)
+        if (!imageFile) {
+            return res.json({ success: false, message: "Doctor image is required" })
+        }
+        const b64 = Buffer.from(imageFile.buffer).toString("base64")
+        const dataURI = `data:${imageFile.mimetype};base64,${b64}`
+        const imageUpload = await cloudinary.uploader.upload(dataURI, { resource_type: "image" })
         const imageUrl = imageUpload.secure_url
 
         const doctorData = {

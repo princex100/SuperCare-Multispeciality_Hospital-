@@ -96,8 +96,8 @@ const Navbar = () => {
       <div className="hidden md:block bg-gradient-to-r from-blue-800 to-teal-500 text-white text-sm py-2 px-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex space-x-6">
-            <div className="flex items-center space-x-1"><FaPhoneAlt size={12} /><span>Emergency: +1 (555) 123-4567</span></div>
-            <div className="flex items-center space-x-1"><FaMapMarkerAlt size={12} /><span>123 Health Ave, SuperCare Medical Center</span></div>
+            <div className="flex items-center space-x-1"><FaPhoneAlt size={12} /><span>Emergency:+91 6397345571</span></div>
+            <div className="flex items-center space-x-1"><FaMapMarkerAlt size={12} /><span>gyan khand 1, SuperCare Medical Center</span></div>
           </div>
           <div className="flex items-center space-x-1"><GiMedicines size={14} /><span>24/7 Pharmacy Services</span></div>
         </div>

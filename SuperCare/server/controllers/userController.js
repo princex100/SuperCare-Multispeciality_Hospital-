@@ -358,13 +358,14 @@ const verifyEmail = async (
 
         await user.save();
 
-        // auto login token
+        // auto login token (expires in 7 days)
         const authToken =
             jwt.sign(
                 {
                     id: user._id,
                 },
-                process.env.JWT_SECRET
+                process.env.JWT_SECRET,
+                { expiresIn: '7d' }
             );
 
         return res.json({
@@ -436,13 +437,14 @@ const loginUser = async (
             });
         }
 
-        // jwt token
+        // jwt token (expires in 7 days)
         const token =
             jwt.sign(
                 {
                     id: user._id
                 },
-                process.env.JWT_SECRET
+                process.env.JWT_SECRET,
+                { expiresIn: '7d' }
             );
 
         res.json({
@@ -507,11 +509,11 @@ const updateProfile = async (req, res) => {
         await userModel.findByIdAndUpdate(userId, { name, phone, address: JSON.parse(address), dob, gender })
 
         if (imageFile) {
-
-            // upload image to cloudinary
-            const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" })
+            // upload image to cloudinary using buffer (memoryStorage compatible)
+            const b64 = Buffer.from(imageFile.buffer).toString("base64")
+            const dataURI = `data:${imageFile.mimetype};base64,${b64}`
+            const imageUpload = await cloudinary.uploader.upload(dataURI, { resource_type: "image" })
             const imageURL = imageUpload.secure_url
-
             await userModel.findByIdAndUpdate(userId, { image: imageURL })
         }
 

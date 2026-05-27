@@ -107,6 +107,7 @@ const Appointment = () => {
             }
 
             toast.error(data.message)
+            return
         }
 
         toast.success(data.message)

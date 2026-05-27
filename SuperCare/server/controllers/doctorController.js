@@ -18,7 +18,7 @@ const loginDoctor = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password)
 
         if (isMatch) {
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' })
             res.json({ success: true, token })
         } else {
             res.json({ success: false, message: "Invalid credentials" })
@@ -58,8 +58,7 @@ const appointmentCancel = async (req, res) => {
             return res.json({ success: true, message: 'Appointment Cancelled' })
         }
 
-        res.json({ success: false, message: 'Appointment Cancelled' })
-
+        res.json({ success: false, message: 'Unauthorized action' })
     } catch (error) {
         console.log(error)
         res.json({ success: false, message: error.message })
@@ -79,8 +78,7 @@ const appointmentComplete = async (req, res) => {
             return res.json({ success: true, message: 'Appointment Completed' })
         }
 
-        res.json({ success: false, message: 'Appointment Cancelled' })
-
+        res.json({ success: false, message: 'Unauthorized action' })
     } catch (error) {
         console.log(error)
         res.json({ success: false, message: error.message })

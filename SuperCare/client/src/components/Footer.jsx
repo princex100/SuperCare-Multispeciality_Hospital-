@@ -22,29 +22,29 @@ const Footer = () => {
                         </p>
                         <div className="flex space-x-4">
                             {/* Facebook */}
-                            <a href="#" className="text-blue-600 hover:text-white hover:bg-blue-600 p-2 rounded-full transition-all duration-300">
+                            <a href="https://www.facebook.com/profile.php?id=100052545952400" target='_blank' className="text-blue-600 hover:text-white hover:bg-blue-600 p-2 rounded-full transition-all duration-300">
                                 <FaFacebookF className="w-5 h-5" />
                             </a>
 
                             {/* Twitter */}
-                            <a href="#" className="text-sky-500 hover:text-white hover:bg-sky-500 p-2 rounded-full transition-all duration-300">
+                            <a href="https://x.com/PrinceS93221007" target='_blank' className="text-sky-500 hover:text-white hover:bg-sky-500 p-2 rounded-full transition-all duration-300">
                                 <FaTwitter className="w-5 h-5" />
                             </a>
 
                             {/* Instagram */}
-                            <a href="#" className="text-pink-600 hover:text-white hover:bg-gradient-to-r from-pink-600 to-purple-600 p-2 rounded-full transition-all duration-300">
+                            <a href="https://www.instagram.com/prince_panditttt/" target='_blank' className="text-pink-600 hover:text-white hover:bg-gradient-to-r from-pink-600 to-purple-600 p-2 rounded-full transition-all duration-300">
                                 <FaInstagram className="w-5 h-5" />
                             </a>
 
                             {/* LinkedIn */}
-                            <a href="#" className="text-blue-700 hover:text-white hover:bg-blue-700 p-2 rounded-full transition-all duration-300">
+                            <a href="https://www.linkedin.com/in/prince-sharma-86b016303/" target='_blank' className="text-blue-700 hover:text-white hover:bg-blue-700 p-2 rounded-full transition-all duration-300">
                                 <FaLinkedinIn className="w-5 h-5" />
                             </a>
 
-                            {/* YouTube */}
+                            {/* YouTube
                             <a href="#" className="text-red-600 hover:text-white hover:bg-red-600 p-2 rounded-full transition-all duration-300">
                                 <FaYoutube className="w-5 h-5" />
-                            </a>
+                            </a> */}
                         </div>
                     </div>
 
@@ -54,14 +54,39 @@ const Footer = () => {
                             Quick Links
                         </h3>
                         <ul className="space-y-3">
-                            {['Home', 'About us', 'Services', 'Doctors', 'Contact us', 'Privacy policy'].map((item) => (
+                            {[
+  {
+    text: "Home",
+    linkTo: "/"
+  },
+  {
+    text: "About us",
+    linkTo: "/about"
+  },
+  {
+    text: "Services",
+    linkTo: "/services"
+  },
+  {
+    text: "Doctors",
+    linkTo: "/doctors"
+  },
+  {
+    text: "Contact us",
+    linkTo: "/contact"
+  },
+  {
+    text: "Privacy policy",
+    linkTo: "/"
+  }
+].map((item) => (
                                 <li key={item}>
                                     <a
-                                        href="#"
+                                        href={item.linkTo}
                                         className="text-gray-600 hover:text-blue-600 transition-all flex items-center group text-sm font-medium"
                                     >
                                         <span className="mr-2 text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                                        <span className="group-hover:translate-x-1 transition-transform">{item}</span>
+                                        <span className="group-hover:translate-x-1 transition-transform">{item.text}</span>
                                     </a>
                                 </li>
                             ))}
@@ -81,7 +106,7 @@ const Footer = () => {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-gray-700 font-medium">+1-212-456-7890</p>
+                                    <p className="text-gray-700 font-medium">+916397345571</p>
                                     <p className="text-sm text-gray-500 mt-1">Mon-Fri, 9am-6pm</p>
                                 </div>
                             </li>
@@ -92,7 +117,7 @@ const Footer = () => {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-gray-700 font-medium">hello@supercare.com</p>
+                                    <p className="text-gray-700 font-medium">princeshrm002@gmail.com</p>
                                     <p className="text-sm text-gray-500 mt-1">We reply within 24 hours</p>
                                 </div>
                             </li>
@@ -104,8 +129,8 @@ const Footer = () => {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-gray-700 font-medium">123 Medical Drive</p>
-                                    <p className="text-sm text-gray-500 mt-1">New York, NY 10001</p>
+                                    <p className="text-gray-700 font-medium">184,gyan khand 1</p>
+                                    <p className="text-sm text-gray-500 mt-1">indirapuram , 201019</p>
                                 </div>
                             </li>
                         </ul>
@@ -144,7 +169,7 @@ const Footer = () => {
                             &copy; {new Date().getFullYear()} SuperCare. All rights reserved.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
-                            <a href="#" className="text-gray-500 hover:text-blue-600 text-sm transition-colors">Terms of Service</a>
+                            <a href="/" className="text-gray-500 hover:text-blue-600 text-sm transition-colors">Terms of Service</a>
                             <a href="#" className="text-gray-500 hover:text-blue-600 text-sm transition-colors">Privacy Policy</a>
                             <a href="#" className="text-gray-500 hover:text-blue-600 text-sm transition-colors">Cookie Policy</a>
                             <a href="#" className="text-gray-500 hover:text-blue-600 text-sm transition-colors">Sitemap</a>

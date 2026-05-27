@@ -1,11 +1,10 @@
 import multer from "multer";
 
-const storage = multer.diskStorage({
-    filename: function (req, file, callback) {
-        callback(null, file.originalname)
-    }
-});
+// memoryStorage keeps the file in RAM as a buffer.
+// This is required for serverless platforms (Vercel) which have no
+// persistent filesystem — diskStorage files are deleted before Cloudinary reads them.
+const storage = multer.memoryStorage();
 
-const upload = multer({ storage: storage })
+const upload = multer({ storage });
 
-export default upload
+export default upload;
