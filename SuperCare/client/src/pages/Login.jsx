@@ -19,13 +19,41 @@ const Login = () => {
     try {
       const endpoint = state === "signup" ? "/register" : "/login"
       const { data } = await axios.post(`${backendUrl}/api/user${endpoint}`, form)
-      if (data.success) {
-        localStorage.setItem("token", data.token)
-        setToken(data.token)
-        toast.success(`Account ${state === "signup" ? "created" : "logged in"} successfully`)
-      } else {
-        toast.error(data.message)
-      }
+     if (data.success) {
+
+    // signup
+    if (
+        state === "signup"
+    ) {
+
+        toast.success(
+            data.message
+        );
+
+        return;
+    }
+
+    // login
+    localStorage.setItem(
+        "token",
+        data.token
+    );
+
+    setToken(
+        data.token
+    );
+
+    toast.success(
+        "Logged in successfully"
+    );
+    navigate("/");
+}
+else {
+
+    toast.error(
+        data.message
+    );
+}
     } catch (error) {
       toast.error(`Error during ${state === "signup" ? "sign up" : "login"}`)
     } finally {
@@ -33,10 +61,17 @@ const Login = () => {
     }
   }
 
-  useEffect(() => {
-    if (token) navigate("/")
-  }, [token])
+useEffect(() => {
 
+    if (
+        token &&
+        token !== "undefined" &&
+        token !== "null"
+    ) {
+        navigate("/");
+    }
+
+}, [token]);
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center px-4"

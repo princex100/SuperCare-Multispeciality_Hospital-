@@ -21,25 +21,24 @@ const DoctorLogin = () => {
     try {
 
       const { data } = await axios.post(
-        backendUrl + "/api/doctor/login",
-        {
-          email,
-          password
-        }
-      );
+  backendUrl + "/api/doctor/login",
+  {
+    email,
+    password
+  }
+);
 
-      if (data.success) {
+if (!data.success) {
+  toast.error(data.message);
+  return;
+}
 
-        localStorage.setItem("dToken", data.token);
-        setDToken(data.token);
+localStorage.setItem("dToken", data.token);
+setDToken(data.token);
 
-        toast.success("Doctor Login Successful");
+toast.success("Doctor Login Successful");
 
-        navigate("/doctor-dashboard");
-
-      } else {
-        toast.error(data.message);
-      }
+navigate("/doctor-dashboard");
 
     } catch (error) {
       console.log(error);

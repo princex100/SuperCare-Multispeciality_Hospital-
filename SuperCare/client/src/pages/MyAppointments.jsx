@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiCalendar, FiClock, FiMapPin, FiCheckCircle, FiXCircle, FiDollarSign, FiChevronDown } from 'react-icons/fi';
 
 const MyAppointments = () => {
-    const { backendUrl, token } = useContext(AppContext);
+    const { backendUrl, token, setToken } = useContext(AppContext);
     const navigate = useNavigate();
 
     const [appointments, setAppointments] = useState([]);
@@ -48,17 +48,38 @@ const MyAppointments = () => {
     };
 
     const getUserAppointments = async () => {
-        try {
-            setIsLoading(true);
-            const { data } = await axios.get(`${backendUrl}/api/user/appointments`, { headers: { token } });
-            setAppointments(data.appointments.reverse());
-        } catch (error) {
-            console.error(error);
-            toast.error(error.message);
-        } finally {
-            setIsLoading(false);
+    try {
+        setIsLoading(true);
+
+        const { data } = await axios.get(
+            `${backendUrl}/api/user/appointments`,
+            { headers: { token } }
+        );
+
+        if (!data.success) {
+
+            if (data.authError) {
+
+                localStorage.removeItem("token");
+                setToken("");
+                toast.error(data.message);
+                navigate("/login");
+                return;
+            }
+
+            toast.error(data.message);
+            return;
         }
-    };
+
+        setAppointments(data.appointments.reverse());
+
+    } catch (error) {
+        console.error(error);
+        toast.error(error.message);
+    } finally {
+        setIsLoading(false);
+    }
+};
 
     const cancelAppointment = async (appointmentId) => {
         try {
@@ -68,12 +89,23 @@ const MyAppointments = () => {
                 { headers: { token } }
             );
 
-            if (data.success) {
-                toast.success(data.message);
-                getUserAppointments();
-            } else {
-                toast.error(data.message);
-            }
+           if (!data.success) {
+
+    if (data.authError) {
+
+        localStorage.removeItem("token");
+        setToken("");
+        toast.error(data.message);
+        navigate("/login");
+        return;
+    }
+
+    toast.error(data.message);
+    return;
+}
+
+toast.success(data.message);
+getUserAppointments();
         } catch (error) {
             console.error(error);
             toast.error(error.message);
@@ -107,13 +139,24 @@ const MyAppointments = () => {
                         response,
                         { headers: { token } }
                     );
-                    if (data.success) {
-                        toast.success(data.message);
-                        setPayment('');
-                        getUserAppointments();
-                    } else {
-                        toast.error(data.message);
-                    }
+                   if (!data.success) {
+
+    if (data.authError) {
+
+        localStorage.removeItem("token");
+        setToken("");
+        toast.error(data.message);
+        navigate("/login");
+        return;
+    }
+
+    toast.error(data.message);
+    return;
+}
+
+toast.success(data.message);
+setPayment('');
+getUserAppointments();
                 } catch (error) {
                     console.error(error);
                     toast.error(error.message);
@@ -144,11 +187,22 @@ const MyAppointments = () => {
                 { headers: { token } }
             );
 
-            if (data.success) {
-                initPay(data.order);
-            } else {
-                toast.error(data.message || 'Unknown backend error');
-            }
+           if (!data.success) {
+
+    if (data.authError) {
+
+        localStorage.removeItem("token");
+        setToken("");
+        toast.error(data.message);
+        navigate("/login");
+        return;
+    }
+
+    toast.error(data.message || 'Unknown backend error');
+    return;
+}
+
+initPay(data.order);
         } catch (error) {
             console.error('Razorpay Error:', error);
             toast.error(error.message);

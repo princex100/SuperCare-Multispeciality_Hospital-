@@ -13,6 +13,7 @@ import Appointment from './pages/Appointment'
 import Services from './pages/Services'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import VerifyEmail from './pages/VerifyEmail.jsx'
 
 const App = () => {
   return (
@@ -43,6 +44,10 @@ const App = () => {
             <Route path='/doctors' element={<Doctors />} />
             <Route path='/doctors/:speciality' element={<Doctors />} />
             <Route path='/services' element={<Services />} />
+            <Route
+  path='/verify-email'
+  element={<VerifyEmail />}
+/>
           </Routes>
         </main>
         <Footer />

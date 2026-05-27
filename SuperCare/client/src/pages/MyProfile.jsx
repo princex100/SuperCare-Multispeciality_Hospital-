@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   FiEdit, FiSave, FiUpload, FiUser, FiChevronDown
 } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 const InputField = ({ label, value, onChange, type = 'text', editable = false, placeholder = '' }) => (
   <div>
@@ -55,7 +56,15 @@ const MyProfile = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [image, setImage] = useState(false);
   const [expandedSection, setExpandedSection] = useState(null);
-  const { token, backendUrl, userData, setUserData, loadUserProfileData } = useContext(AppContext);
+  const navigate = useNavigate();
+ const {
+  token,
+  backendUrl,
+  userData,
+  setUserData,
+  loadUserProfileData,
+  setToken
+} = useContext(AppContext);
 
   const updateUserProfileData = async () => {
     try {
@@ -71,12 +80,25 @@ const MyProfile = () => {
         headers: { token },
       });
 
-      if (data.success) {
-        toast.success(data.message);
-        await loadUserProfileData();
-        setIsEdit(false);
-        setImage(false);
-      } else toast.error(data.message);
+      if (!data.success) {
+
+    if (data.authError) {
+
+        localStorage.removeItem("token");
+        setToken("");
+        toast.error(data.message);
+        navigate("/login");
+        return;
+    }
+
+    toast.error(data.message);
+    return;
+}
+
+toast.success(data.message);
+await loadUserProfileData();
+setIsEdit(false);
+setImage(false);
     } catch (error) {
       toast.error(error.message);
     }

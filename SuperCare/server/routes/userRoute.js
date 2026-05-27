@@ -3,9 +3,14 @@ import { loginUser, registerUser, getProfile, updateProfile, bookAppointment, li
 import upload from '../middleware/multer.js';
 import authUser from '../middleware/authUser.js';
 const userRouter = express.Router();
+import { verifyEmail } from '../controllers/userController.js';
 
 userRouter.post("/register", registerUser)
 userRouter.post("/login", loginUser)
+userRouter.get(
+   "/verify-email",
+   verifyEmail
+)
 
 userRouter.get("/get-profile", authUser, getProfile)
 userRouter.post("/update-profile", upload.single('image'), authUser, updateProfile)
@@ -14,5 +19,6 @@ userRouter.get("/appointments", authUser, listAppointment)
 userRouter.post("/cancel-appointment", authUser, cancelAppointment)
 userRouter.post("/payment-razorpay", authUser, paymentRazorpay)
 userRouter.post("/verifyRazorpay", authUser, verifyRazorpay)
+
 
 export default userRouter;

@@ -33,34 +33,56 @@ const AppContextProvider = (props) => {
     }
 
     // Getting User Profile using API
-    const loadUserProfileData = async () => {
+   const loadUserProfileData = async () => {
 
-        try {
+    try {
 
-            const { data } = await axios.get(backendUrl + '/api/user/get-profile', { headers: { token } })
-
-            if (data.success) {
-                setUserData(data.userData)
-            } else {
-                toast.error(data.message)
-            }
-
-        } catch (error) {
-            console.log(error)
-            toast.error(error.message)
+        if (
+            !token ||
+            token === "undefined" ||
+            token === "null"
+        ) {
+            return;
         }
 
+        const { data } = await axios.get(
+            backendUrl + "/api/user/get-profile",
+            { headers: { token } }
+        );
+
+        if (!data.success) {
+
+    if (data.authError) {
+
+        localStorage.removeItem("token");
+        setToken("");
+        setUserData(false);
+        return;
     }
+
+    toast.error(data.message);
+    return;
+}
+
+        setUserData(data.userData);
+
+    } catch (error) {
+        console.log(error);
+        toast.error(error.message);
+    }
+};
 
     useEffect(() => {
         getDoctosData()
     }, [])
 
     useEffect(() => {
-        if (token) {
-            loadUserProfileData()
-        }
-    }, [token])
+
+    if (token) {
+        loadUserProfileData();
+    }
+
+}, [token]);
 
     const value = {
         doctors, getDoctosData,

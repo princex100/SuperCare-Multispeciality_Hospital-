@@ -8,6 +8,106 @@ import { v2 as cloudinary } from 'cloudinary'
 import razorpay from 'razorpay';
 import crypto from 'crypto';
 
+
+//sendEMAIL function
+
+import nodemailer from "nodemailer";
+import Mailgen from "mailgen";
+
+
+//genrating email content
+const generateVerificationMailgenContent = (
+    username,
+    verificationURL
+) => {
+    return {
+        body: {
+            name: username,
+
+            intro:
+                "Welcome to SuperCare! Please verify your email to activate your account.",
+
+            action: {
+                instructions:
+                    "Click the button below to verify your account. This link will expire in 10 minutes.",
+
+                button: {
+                    color: "#22BC66",
+                    text: "Verify Account",
+                    link: verificationURL,
+                },
+            },
+
+            outro:
+                "If you did not create an account, you can safely ignore this email.",
+        },
+    };
+};
+
+
+//sendemail function
+const sendMail = async (options) => {
+    try {
+        // mailgen instance
+        const mailGenerator = new Mailgen({
+            theme: "default",
+            product: {
+                name: "SuperCare",
+                link: process.env.CLIENT_URL,
+            },
+        });
+
+        // generate html mail
+        const html =
+            mailGenerator.generate(
+                options.mailgenContent
+            );
+
+        // generate plain text mail
+        const text =
+            mailGenerator.generatePlaintext(
+                options.mailgenContent
+            );
+
+        // transporter
+       const transporter =
+    nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: process.env.MAIL_USER,
+            pass: process.env.MAIL_PASS,
+        },
+    });
+
+        // structured mail object
+        const mail = {
+            from: `SuperCare Team`,
+            to: options.to,
+            subject: options.subject,
+            text,
+            html,
+        };
+
+        // send mail
+        await transporter.sendMail(mail);
+
+        return {
+            success: true,
+            message: "Email sent successfully",
+        };
+
+    } catch (error) {
+        console.log(error);
+
+        return {
+            success: false,
+            message: error.message,
+        };
+    }
+};
+
+
+
 // Gateway Initialize
 const razorpayInstance = new razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
@@ -15,89 +115,383 @@ const razorpayInstance = new razorpay({
 })
 
 // API to register user
+// import bcrypt from "bcrypt";
+// import validator from "validator";
+// import crypto from "crypto";
+// import userModel from "../models/userModel.js";
+
+// register user
 const registerUser = async (req, res) => {
+  try {
+    const { name, email, password } =
+      req.body;
 
-    try {
-        const { name, email, password } = req.body;
-
-        // checking for all data to register user
-        if (!name || !email || !password) {
-            return res.json({ success: false, message: 'Missing Details' })
-        }
-
-        // validating email format
-        if (!validator.isEmail(email)) {
-            return res.json({ success: false, message: "Please enter a valid email" })
-        }
-
-        // validating strong password
-        if (password.length < 8) {
-            return res.json({ success: false, message: "Please enter a strong password" })
-        }
-
-        // hashing user password
-        const salt = await bcrypt.genSalt(10); // the more no. round the more time it will take
-        const hashedPassword = await bcrypt.hash(password, salt)
-
-        const userData = {
-            name,
-            email,
-            password: hashedPassword,
-        }
-
-        const newUser = new userModel(userData)
-        const user = await newUser.save()
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
-
-        res.json({ success: true, token })
-
-    } catch (error) {
-        console.log(error)
-        res.json({ success: false, message: error.message })
+    // checking required fields
+    if (!name || !email || !password) {
+      return res.json({
+        success: false,
+        message: "Missing Details",
+      });
     }
-}
 
-// API to login user
-const loginUser = async (req, res) => {
+    // normalize email
+    const normalizedEmail = email
+      .toLowerCase()
+      .trim();
 
+    // validate email
+    if (
+      !validator.isEmail(
+        normalizedEmail
+      )
+    ) {
+      return res.json({
+        success: false,
+        message:
+          "Please enter a valid email",
+      });
+    }
+
+    // validate password
+    if (password.length < 8) {
+      return res.json({
+        success: false,
+        message:
+          "Please enter a strong password",
+      });
+    }
+
+    // check if user exists
+    const existingUser =
+      await userModel.findOne({
+        email: normalizedEmail,
+      });
+
+    // verified account exists
+    if (
+      existingUser &&
+      existingUser.isVerified
+    ) {
+      return res.json({
+        success: false,
+        message:
+          "Account already exists. Please login",
+      });
+    }
+
+    // generate raw verification token
+    const rawVerificationToken =
+      crypto.randomBytes(32).toString(
+        "hex"
+      );
+
+    // hash token before storing
+    const hashedVerificationToken =
+      crypto
+        .createHash("sha256")
+        .update(rawVerificationToken)
+        .digest("hex");
+
+    // token expiry (10 min)
+    const verificationExpiry =
+      Date.now() + 10 * 60 * 1000;
+
+    // verification url
+    const verificationUrl = `${
+      process.env.CLIENT_URL
+    }/verify-email?token=${rawVerificationToken}`;
+
+    // hash password
+    const salt =
+      await bcrypt.genSalt(10);
+
+    const hashedPassword =
+      await bcrypt.hash(
+        password,
+        salt
+      );
+
+    // generate mailgen content
+    const mailgenContent =
+      generateVerificationMailgenContent(
+        name,
+        verificationUrl
+      );
+
+    // options object
+    const options = {
+      to: normalizedEmail,
+      subject:
+        "Verify Your SuperCare Account",
+      mailgenContent,
+    };
+
+    // send email
+    const emailResponse =
+      await sendMail(options);
+
+    // if mail failed
+    if (!emailResponse.success) {
+      return res.json({
+        success: false,
+        message:
+          emailResponse.message,
+      });
+    }
+
+    // existing user but unverified
+    if (
+      existingUser &&
+      !existingUser.isVerified
+    ) {
+      existingUser.name = name;
+
+      existingUser.password =
+        hashedPassword;
+
+      existingUser.emailVerificationToken =
+        hashedVerificationToken;
+
+      existingUser.emailVerificationExpiry =
+        verificationExpiry;
+
+      await existingUser.save();
+
+      return res.json({
+        success: true,
+        message:
+          "Verification email resent successfully",
+      });
+    }
+
+    // create new user
+    await userModel.create({
+      name,
+      email: normalizedEmail,
+      password:
+        hashedPassword,
+
+      isVerified: false,
+
+      emailVerificationToken:
+        hashedVerificationToken,
+
+      emailVerificationExpiry:
+        verificationExpiry,
+    });
+
+    return res.json({
+      success: true,
+      message:
+        "Verification email sent successfully",
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    return res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+//verify email
+const verifyEmail = async (
+    req,
+    res
+) => {
     try {
-        const { email, password } = req.body;
-        const user = await userModel.findOne({ email })
+        const { token } = req.query;
+
+        if (!token) {
+            return res.json({
+                success: false,
+                message:
+                    "Verification token missing",
+            });
+        }
+
+        // hash incoming token
+        const hashedToken =
+            crypto
+                .createHash("sha256")
+                .update(token)
+                .digest("hex");
+
+        // find user
+        const user =
+            await userModel.findOne({
+                emailVerificationToken:
+                    hashedToken,
+            });
 
         if (!user) {
-            return res.json({ success: false, message: "User does not exist" })
+            return res.json({
+                success: false,
+                message:
+                    "Invalid verification link",
+            });
         }
 
-        const isMatch = await bcrypt.compare(password, user.password)
+        // check expiry
+        if (
+            user.emailVerificationExpiry <
+            Date.now()
+        ) {
+            return res.json({
+                success: false,
+                message:
+                    "Verification link expired",
+            });
+        }
 
-        if (isMatch) {
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
-            res.json({ success: true, token })
-        }
-        else {
-            res.json({ success: false, message: "Invalid credentials" })
-        }
+        // verify user
+        user.isVerified = true;
+
+        user.emailVerificationToken =
+            null;
+
+        user.emailVerificationExpiry =
+            null;
+
+        await user.save();
+
+        // auto login token
+        const authToken =
+            jwt.sign(
+                {
+                    id: user._id,
+                },
+                process.env.JWT_SECRET
+            );
+
+        return res.json({
+            success: true,
+            token: authToken,
+            message:
+                "Email verified successfully",
+        });
+
     } catch (error) {
-        console.log(error)
-        res.json({ success: false, message: error.message })
-    }
-}
+        console.log(error);
 
-// API to get user profile data
-const getProfile = async (req, res) => {
+        res.json({
+            success: false,
+            message:
+                error.message,
+        });
+    }
+};
+
+// API to login user
+const loginUser = async (
+    req,
+    res
+) => {
 
     try {
-        const { userId } = req.body
-        const userData = await userModel.findById(userId).select('-password')
 
-        res.json({ success: true, userData })
+        const {
+            email,
+            password
+        } = req.body;
+
+        const user =
+            await userModel.findOne({
+                email
+            });
+
+        // user not found
+        if (!user) {
+            return res.json({
+                success: false,
+                message:
+                    "Please register first"
+            });
+        }
+
+        // email verification check
+        if (!user.isVerified) {
+            return res.json({
+                success: false,
+                message:
+                    "Please verify your email first"
+            });
+        }
+
+        // password check
+        const isMatch =
+            await bcrypt.compare(
+                password,
+                user.password
+            );
+
+        if (!isMatch) {
+            return res.json({
+                success: false,
+                message:
+                    "Invalid credentials"
+            });
+        }
+
+        // jwt token
+        const token =
+            jwt.sign(
+                {
+                    id: user._id
+                },
+                process.env.JWT_SECRET
+            );
+
+        res.json({
+            success: true,
+            token
+        });
 
     } catch (error) {
-        console.log(error)
-        res.json({ success: false, message: error.message })
+
+        console.log(error);
+
+        res.json({
+            success: false,
+            message:
+                error.message
+        });
     }
 }
+const getProfile = async (
+    req,
+    res
+) => {
 
+    try {
+
+        const { userId } =
+            req.body;
+
+        const userData =
+            await userModel
+                .findById(userId)
+                .select("-password");
+
+        res.json({
+            success: true,
+            userData
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.json({
+            success: false,
+            message:
+                error.message
+        });
+    }
+}
 // API to update user profile
 const updateProfile = async (req, res) => {
 
@@ -124,7 +518,6 @@ const updateProfile = async (req, res) => {
         res.json({ success: true, message: 'Profile Updated' })
 
     } catch (error) {
-        console.log(error)
         res.json({ success: false, message: error.message })
     }
 }
@@ -307,5 +700,6 @@ export {
     listAppointment,
     cancelAppointment,
     paymentRazorpay,
-    verifyRazorpay
+    verifyRazorpay,
+    verifyEmail
 }
