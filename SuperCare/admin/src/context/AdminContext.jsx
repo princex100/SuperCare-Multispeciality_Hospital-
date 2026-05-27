@@ -71,27 +71,6 @@ const AdminContextProvider = (props) => {
 
     }
 
-    // Function to cancel appointment using API
-    const cancelAppointment = async (appointmentId) => {
-
-        try {
-
-            const { data } = await axios.post(backendUrl + '/api/admin/cancel-appointment', { appointmentId }, { headers: { aToken } })
-
-            if (data.success) {
-                toast.success(data.message)
-                getAllAppointments()
-            } else {
-                toast.error(data.message)
-            }
-
-        } catch (error) {
-            toast.error(error.message)
-            console.log(error)
-        }
-
-    }
-
     // Getting Admin Dashboard data from Database using API
     const getDashData = async () => {
         try {
@@ -107,6 +86,26 @@ const AdminContextProvider = (props) => {
         } catch (error) {
             console.log(error)
             toast.error(error.message)
+        }
+    }
+
+    // Function to cancel appointment using API
+    const cancelAppointment = async (appointmentId) => {
+        try {
+
+            const { data } = await axios.post(backendUrl + '/api/admin/cancel-appointment', { appointmentId }, { headers: { aToken } })
+
+            if (data.success) {
+                toast.success(data.message)
+                getAllAppointments()
+                getDashData()
+            } else {
+                toast.error(data.message)
+            }
+
+        } catch (error) {
+            toast.error(error.message)
+            console.log(error)
         }
 
     }
